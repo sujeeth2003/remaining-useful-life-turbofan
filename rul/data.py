@@ -12,3 +12,17 @@ SENSORS = [f"x{i}" for i in range(1, 22)]
 COLUMNS = ["unit", "cycle"] + SETTINGS + SENSORS
 
 
+def load_cmapss(path):
+    df = pd.read_csv(path, sep=r"\s+", header=None, names=COLUMNS)
+    return add_rul(df)
+
+
+def add_rul(df, clip=125):
+    """RUL = cycles remaining until the unit's last recorded cycle; clipped (early life is not informative)."""
+    last = df.groupby("unit")["cycle"].transform("max")
+    df = df.copy()
+    df["rul"] = last - df["cycle"]
+    df["rul_clipped"] = df["rul"].clip(upper=clip)
+    return df
+
+
