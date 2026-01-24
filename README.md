@@ -19,3 +19,11 @@ gradient boosting                     15.9 +/- 1.2         7.9 +/- 2.5          
 ```
 Reading it: the error over all cycles (~16) is larger than at the last cycle (~8) because far from failure the signal is weak and the model can only say "still healthy"; near failure the degradation is obvious. The synthetic degradation is smooth and low-noise, so **real engines will be harder**; treat these as a check that the pipeline and evaluation are sound, not as a benchmark.
 
+## Run
+```bash
+pip install numpy pandas scikit-learn
+python -m unittest discover -s tests          # 4 tests: RUL definition, feature causality, NASA score asymmetry, RMSE
+python run_rul.py                             # synthetic fleet (about 5 minutes on one core)
+python run_rul.py --cmapss train_FD001.txt    # real data
+```
+`tests/` includes a check that features are **causal**: changing an engine's future readings does not change earlier feature rows, so the same code is valid for online prediction.
