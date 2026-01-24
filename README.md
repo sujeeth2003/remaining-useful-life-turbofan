@@ -10,3 +10,12 @@ Predict how many operating cycles an engine has left before failure from its sen
 - **Models:** random forest and gradient boosting versus a predict-the-mean baseline. (An LSTM is the usual next step; PyTorch was not part of this environment, so it is not included.)
 - **Evaluation done properly:** k-fold **grouped by engine**. A random row split leaks, because consecutive cycles of one engine are near duplicates, and looks far better than reality. Reported both over all cycles and over each engine's **last observed cycle**, which is the moment a maintenance decision is made, plus the asymmetric **NASA score** (late predictions are punished harder than early ones).
 
+## Results (synthetic fleet: 60 engines, 3-fold, mean +/- std across folds)
+```
+model                           RMSE (all cycles)  RMSE (last cycle)  NASA score (last)
+baseline: predict train mean          40.8 +/- 0.0        92.5 +/- 0.0             208655
+random forest                         16.2 +/- 1.2         8.4 +/- 1.5                 27
+gradient boosting                     15.9 +/- 1.2         7.9 +/- 2.5                 25
+```
+Reading it: the error over all cycles (~16) is larger than at the last cycle (~8) because far from failure the signal is weak and the model can only say "still healthy"; near failure the degradation is obvious. The synthetic degradation is smooth and low-noise, so **real engines will be harder**; treat these as a check that the pipeline and evaluation are sound, not as a benchmark.
+
