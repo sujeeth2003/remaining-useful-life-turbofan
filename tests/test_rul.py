@@ -29,3 +29,13 @@ class RULTests(unittest.TestCase):
         early = (df["unit"] == 1) & (df["cycle"] <= 100)
         np.testing.assert_allclose(X1[early].to_numpy(), X2[early].to_numpy())
 
+    def test_nasa_score_penalises_late_more_than_early(self):
+        self.assertGreater(nasa_score([50], [70]), nasa_score([50], [30]))       # +20 late vs 20 early
+        self.assertEqual(nasa_score([10, 20], [10, 20]), 0.0)
+
+    def test_rmse(self):
+        self.assertAlmostEqual(rmse([0, 0], [3, 4]), (12.5) ** 0.5)
+
+
+if __name__ == "__main__":
+    unittest.main()
